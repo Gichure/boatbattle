@@ -21,9 +21,9 @@ import javax.swing.JSeparator;
 import javax.swing.UIManager;
 
 import com.boatbattles.listeners.ClickListener;
+import com.boatbattles.models.Boat;
 
 public class BoatBattle extends JFrame {
-	
 	 final static int gridSize = 10;
 	   
     JButton switchButton = new JButton("Pass");
@@ -37,9 +37,12 @@ public class BoatBattle extends JFrame {
    static ActionListener clickListener = new ClickListener();
     
     String rowChars[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+    String colChars[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
     
     public BoatBattle(String name) {
-        super(name);
+        super(name
+        		
+        		);
         setResizable(false);
     }
   
@@ -67,21 +70,21 @@ public class BoatBattle extends JFrame {
                 (int)(buttonSize.getHeight() * 8)+80)); 
         //Add buttons to player two's grid
         
-        for (int i = 0; i < gridSize; i++) {
-            for (int j = 0; j < gridSize; j++) {
-            	 buttons[i][j] = new JButton(i+rowChars[j]);
+        for (int i = 0; i < colChars.length; i++) {
+            for (int j = 0; j < rowChars.length; j++) {
+            	 buttons[i][j] = new JButton(colChars[i]+rowChars[j]);
             	 buttons[i][j].setBackground(white);
             	 buttons[i][j].addActionListener(clickListener);
                 playerTwoGrid.add( buttons[i][j]);
-                 
             }
         }
-        
+       
         //Add buttons to player one's grid
-        for (int i = 0; i < gridSize; i++) {
-            for (int j = 0; j < gridSize; j++) {
-            	buttons[i][j] = new JButton(i+rowChars[j]);
+        for (int i = 0; i < colChars.length; i++) {
+            for (int j = 0; j < rowChars.length; j++) {
+            	buttons[i][j] = new JButton(colChars[i]+rowChars[j]);
               	buttons[i][j].setBackground(white);
+              	buttons[i][j].addActionListener(clickListener);
               	playerOneGrid.add( buttons[i][j]);
             }
         }
@@ -172,5 +175,16 @@ public class BoatBattle extends JFrame {
         //a submenu
         menu.addSeparator();
         return menuBar;
+    }
+    
+ public boolean validate(Boat b, int x, int y, String orientation, JButton jb){
+	 	if(("V".equalsIgnoreCase(orientation) && x+b.getLength() > rowChars.length) ||("H".equalsIgnoreCase(orientation) && x+b.getLength() > colChars.length) ){
+	 		return false;
+	 	}
+	 	else{
+	 		//Validate against the Background colour of the button
+	 			if(jb.getBackground() != white) return false;
+	 	}
+    	return true;
     }
 }
