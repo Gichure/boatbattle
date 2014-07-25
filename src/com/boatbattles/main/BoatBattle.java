@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.MenuBar;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -74,8 +75,9 @@ public class BoatBattle extends JFrame {
             for (int j = 0; j < rowChars.length; j++) {
             	 buttons[i][j] = new JButton(colChars[i]+rowChars[j]);
             	 buttons[i][j].setBackground(white);
+            	 buttons[i][j].setMargin(new Insets(0, 0, 0, 0));
             	 buttons[i][j].addActionListener(clickListener);
-                playerTwoGrid.add( buttons[i][j]);
+                playerTwoGrid.add(buttons[i][j]);
             }
         }
        
@@ -84,8 +86,9 @@ public class BoatBattle extends JFrame {
             for (int j = 0; j < rowChars.length; j++) {
             	buttons[i][j] = new JButton(colChars[i]+rowChars[j]);
               	buttons[i][j].setBackground(white);
+              	buttons[i][j].setMargin(new Insets(0, 0, 0, 0));
               	buttons[i][j].addActionListener(clickListener);
-              	playerOneGrid.add( buttons[i][j]);
+              	playerOneGrid.add(buttons[i][j]);
             }
         }
        
@@ -164,7 +167,11 @@ public class BoatBattle extends JFrame {
 
         menuBar.add(menu);
 
-        menuItem = new JMenuItem("Start");
+        menuItem = new JMenuItem("Arrange Boat");
+        menuItem.addActionListener(clickListener);
+        menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Reset");
         menuItem.addActionListener(clickListener);
         menu.add(menuItem);
 
