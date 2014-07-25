@@ -67,18 +67,19 @@ public class BoatBattle extends JFrame {
                 (int)(buttonSize.getHeight() * 8)+80)); 
         //Add buttons to player two's grid
         
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
             	 buttons[i][j] = new JButton(i+rowChars[j]);
             	 buttons[i][j].setBackground(white);
+            	 buttons[i][j].addActionListener(clickListener);
                 playerTwoGrid.add( buttons[i][j]);
                  
             }
         }
-       
+        
         //Add buttons to player one's grid
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridSize; j++) {
             	buttons[i][j] = new JButton(i+rowChars[j]);
               	buttons[i][j].setBackground(white);
               	playerOneGrid.add( buttons[i][j]);
