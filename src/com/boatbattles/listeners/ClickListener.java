@@ -26,6 +26,10 @@ public class ClickListener extends BoatBattle implements ActionListener {
 	public ArrayList<Boat> arrangedBoats = new ArrayList<>();
 	public ArrayList<JButton> neighborButtons = new ArrayList<>();
 	
+	public ArrayList<JButton> occupiedButtons2 = new ArrayList<>();
+	public ArrayList<Boat> arrangedBoats2 = new ArrayList<>();
+	public ArrayList<JButton> neighborButtons2 = new ArrayList<>();
+	
 	public ClickListener(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
@@ -77,6 +81,15 @@ public class ClickListener extends BoatBattle implements ActionListener {
 		               //Hide boats
 		            	ResetGame();
 		        }
+	            else if (menutext.equals("Switch Player"))
+	            {
+	            	if(currentPlayer == 1)
+	            		currentPlayer =2;
+	            		
+	            	else
+	            		currentPlayer = 1;
+		        }
+	            
 	            else if (menutext.equals("Quit"))
 	            {
 	            	//Quit the application
@@ -85,7 +98,6 @@ public class ClickListener extends BoatBattle implements ActionListener {
 	            else
 	            {
 	            	//show default error message for non selection
-	            	System.out.println("No selection made");
 	            }
 	        }
 	        // Handle the event from the user clicking on a command button
@@ -124,13 +136,17 @@ public class ClickListener extends BoatBattle implements ActionListener {
     	neighborButtons.clear();
     	arrangedBoats.clear();
     	occupiedButtons.clear();
+    	
+    	neighborButtons2.clear();
+    	arrangedBoats2.clear();
+    	occupiedButtons2.clear();
+    	
     	  for (int i = 0; i < colChars.length; i++) {
               for (int j = 0; j < rowChars.length; j++) {
               	gridTwobuttons[i][j].setBackground(Color.WHITE);
               	gridOnebuttons[i][j].setBackground(Color.WHITE);
               }
           }
-    	  System.out.println("Game Reset");
     }
     
     public void QuitGame()
@@ -247,7 +263,10 @@ public class ClickListener extends BoatBattle implements ActionListener {
 								break;
 							}
 							boolean goaAhead = true;
-							for (Iterator iterator = arrangedBoats.iterator(); iterator
+							 ArrayList<Boat> sourceBoats = arrangedBoats;
+							if(currentPlayer == 2) sourceBoats = arrangedBoats2;
+							
+							for (Iterator iterator = sourceBoats.iterator(); iterator
 									.hasNext();) {
 								if(b == (Boat) iterator.next()){
 									SetStatusMessage("Boat already placed on board!",JOptionPane.ERROR_MESSAGE);
@@ -291,14 +310,18 @@ public class ClickListener extends BoatBattle implements ActionListener {
 			 	}
 			 	else{
 			 		JButton bt = getSelectedButton(x, y);
+			 		ArrayList<JButton> sourceBtns = occupiedButtons;
+			 		if(currentPlayer==2)sourceBtns= occupiedButtons2;
 			 	    //place it on the grid
-			 		for(JButton jb : occupiedButtons){
+			 		for(JButton jb : sourceBtns){
 			 			if (jb.getActionCommand().equalsIgnoreCase(bt.getActionCommand())){
 			 				SetStatusMessage(jb.getActionCommand() + " already occupied.",JOptionPane.ERROR_MESSAGE);
 			 				return false;
 			 			}
 			 		}
-			 		for(JButton jb : neighborButtons){
+			 		ArrayList<JButton> sourceneighBtns = neighborButtons;
+			 		if(currentPlayer==2)sourceneighBtns= neighborButtons2;
+			 		for(JButton jb : sourceneighBtns){
 			 			if (jb.getActionCommand().equalsIgnoreCase(bt.getActionCommand())){
 			 				SetStatusMessage(jb.getActionCommand() + " is neighbour to occupied position.",JOptionPane.ERROR_MESSAGE);
 			 				return false;
@@ -316,14 +339,20 @@ public class ClickListener extends BoatBattle implements ActionListener {
 			 return bt;
 		 }
 		 public void setNeighborButtons(int x, int y){
+			 if(currentPlayer ==1){
 				 if(x != rowChars.length-1) neighborButtons.add(getSelectedButton(x+1, y));
 				 if(x !=0) neighborButtons.add(getSelectedButton(x-1, y));
 				 if(y != colChars.length-1) neighborButtons.add(getSelectedButton(x, y+1));
 				 if(y !=0) neighborButtons.add(getSelectedButton(x, y-1));
-			 System.out.println("Neighbours size: "+neighborButtons.size());
+			 }
+			 else{
+				 if(x != rowChars.length-1) neighborButtons2.add(getSelectedButton(x+1, y));
+				 if(x !=0) neighborButtons2.add(getSelectedButton(x-1, y));
+				 if(y != colChars.length-1) neighborButtons2.add(getSelectedButton(x, y+1));
+				 if(y !=0) neighborButtons2.add(getSelectedButton(x, y-1));
+			 }
 		 } 
 		 public ArrayList<JButton> paintAdjacentButtons(int x, int y, Boat b, int orientation){
-			 System.out.println("Length:" +b.getSize());
 			 ArrayList<JButton> bts = new ArrayList<>(b.getSize());
 			 JButton jb = null;
 			 if(orientation == 0){
@@ -343,8 +372,15 @@ public class ClickListener extends BoatBattle implements ActionListener {
 	 				bts.add(jb);
 		 			}
 			 }
-			 occupiedButtons.addAll(bts);
-			 arrangedBoats.add(b);
+			 if(currentPlayer ==1){
+				 occupiedButtons.addAll(bts);
+				 arrangedBoats.add(b); 
+			 }
+			 else{
+				 occupiedButtons2.addAll(bts);
+				 arrangedBoats2.add(b);
+			 }
+			 
 			 return bts;
 		 }
 			 

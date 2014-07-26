@@ -202,6 +202,10 @@ public class BoatBattle extends JFrame {
         menuItem = new JMenuItem("Reset");
         menuItem.addActionListener(clickListener);
         menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Switch Player");
+        menuItem.addActionListener(clickListener);
+        menu.add(menuItem);
 
         menuItem = new JMenuItem("Quit");
         menuItem.addActionListener(clickListener);
@@ -218,7 +222,6 @@ public class BoatBattle extends JFrame {
  }
  public void SetStatusMessage(String statusMessage,int msgType){
 	 JOptionPane.showMessageDialog(this, statusMessage, title, msgType);
-	 System.out.println(statusMessage);
 	 statusLabel.setText(statusMessage);
  }
 }
