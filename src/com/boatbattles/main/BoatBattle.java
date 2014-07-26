@@ -6,10 +6,12 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.MenuBar;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,40 +19,55 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.UIManager;
 
 import com.boatbattles.listeners.ClickListener;
-import com.boatbattles.models.Boat;
 
 public class BoatBattle extends JFrame {
-	 final static int gridSize = 10;
-	   
+	 /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	final static int gridSize = 10;
+	
+	public int currentPlayer = 1 ;
+	public static String title = "Battle Boat Game";
     JButton switchButton = new JButton("Pass");
     GridLayout playerTwoLayout = new GridLayout(gridSize,gridSize);
     GridLayout playerOneLayout = new GridLayout(gridSize,gridSize);
     GridLayout detailsLayout = new GridLayout(1,2);
     Color white =Color.WHITE;
     Color green =Color.GREEN;
-    private static JButton[][] buttons  = new JButton[10][10];
+    public static JButton[][] gridTwobuttons  = new JButton[10][10];
     
-   static ActionListener clickListener = new ClickListener();
+    public static JButton[][] gridOnebuttons  = new JButton[10][10];
     
-    String rowChars[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
-    String colChars[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+    JLabel currentPlayerLabel = new JLabel("Player One");
+    JLabel statusLabel = new JLabel("Not Started");
+    
+    JLabel playerOneLabel = new JLabel("Player One\'s Sea");
+    JLabel playerTwoLabel = new JLabel("Player Two\'s Sea");
+    
+    public final JPanel playerTwoGrid = new JPanel();
+    public final JPanel playerOneGrid = new JPanel();
+
+   static ActionListener clickListener = new ClickListener("");
+    
+    public String rowChars[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
+    public String colChars[] = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
     
     public BoatBattle(String name) {
-        super(name
-        		
-        		);
+        super(name);
         setResizable(false);
     }
   
     public void addComponentsToPane(final Container pane) {
 
-        final JPanel playerTwoGrid = new JPanel();
-        final JPanel playerOneGrid = new JPanel();
+        
         playerTwoGrid.setLayout(playerTwoLayout);
         playerOneGrid.setLayout(playerOneLayout);
         playerOneGrid.setBackground(white);
@@ -65,42 +82,39 @@ public class BoatBattle extends JFrame {
         //Set up components preferred size
         JButton b = new JButton("                   ");
         Dimension buttonSize = b.getPreferredSize();
-        playerTwoGrid.setPreferredSize(new Dimension((int)(buttonSize.getWidth() * 2.5)+20,
-                (int)(buttonSize.getHeight() * 8)+80));
-        playerOneGrid.setPreferredSize(new Dimension((int)(buttonSize.getWidth() * 2.5)+20,
-                (int)(buttonSize.getHeight() * 8)+80)); 
+        playerTwoGrid.setPreferredSize(new Dimension((int)(buttonSize.getWidth() * 2.6)+30,
+                (int)(buttonSize.getHeight() * 8)+85));
+        playerOneGrid.setPreferredSize(new Dimension((int)(buttonSize.getWidth() * 2.6)+30,
+                (int)(buttonSize.getHeight() * 8)+85)); 
         //Add buttons to player two's grid
         
         for (int i = 0; i < colChars.length; i++) {
             for (int j = 0; j < rowChars.length; j++) {
-            	 buttons[i][j] = new JButton(colChars[i]+rowChars[j]);
-            	 buttons[i][j].setBackground(white);
-            	 buttons[i][j].setMargin(new Insets(0, 0, 0, 0));
-            	 buttons[i][j].addActionListener(clickListener);
-                playerTwoGrid.add(buttons[i][j]);
+            	gridTwobuttons[i][j] = new JButton(colChars[i]+rowChars[j]);
+            	gridTwobuttons[i][j].setBackground(white);
+            	gridTwobuttons[i][j].setMargin(new Insets(0, 0, 0, 0));
+            	gridTwobuttons[i][j].addActionListener(clickListener);
+                playerTwoGrid.add(gridTwobuttons[i][j]);
             }
         }
-       
         //Add buttons to player one's grid
         for (int i = 0; i < colChars.length; i++) {
             for (int j = 0; j < rowChars.length; j++) {
-            	buttons[i][j] = new JButton(colChars[i]+rowChars[j]);
-              	buttons[i][j].setBackground(white);
-              	buttons[i][j].setMargin(new Insets(0, 0, 0, 0));
-              	buttons[i][j].addActionListener(clickListener);
-              	playerOneGrid.add(buttons[i][j]);
+            	gridOnebuttons[i][j] = new JButton(colChars[i]+rowChars[j]);
+            	gridOnebuttons[i][j].setBackground(white);
+            	gridOnebuttons[i][j].setMargin(new Insets(0, 0, 0, 0));
+            	gridOnebuttons[i][j].addActionListener(clickListener);
+              	playerOneGrid.add(gridOnebuttons[i][j]);
             }
         }
        
          //Add items to the header
-        header.add(new JLabel("Player One\'s Sea"));
-        header.add(new JLabel("My Sea"));
+        header.add(playerOneLabel);
+        header.add(playerTwoLabel);
         //Add items to the footer
         footer.add(new JLabel("Current Player:"));
-        JLabel currentPlayerLabel = new JLabel("Player One");
         footer.add(currentPlayerLabel);
         footer.add(new JLabel("Status Message:"));
-        JLabel statusLabel = new JLabel("Not Started");
         footer.add(statusLabel);
                 
       //Process the Apply gaps button press
@@ -124,13 +138,14 @@ public class BoatBattle extends JFrame {
      */
     private static void showGUI() {
         //Create and set up the window.
-    	BoatBattle frame = new BoatBattle("Battle Boat Game");
+    	BoatBattle frame = new BoatBattle(title);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //Set up the content pane.
         frame.addComponentsToPane(frame.getContentPane());
         frame.setBackground(Color.WHITE);
         JMenuBar mb = createMenu();
         frame.setJMenuBar(mb);
+        frame.setResizable(false);
         //Place it at the center of the screen
         frame.setLocationRelativeTo(null);
         //Display the window.
@@ -139,6 +154,19 @@ public class BoatBattle extends JFrame {
     }
      
     public static void main(String[] args) {
+    	Date date = new Date();
+    	Calendar cal = Calendar.getInstance();
+    	cal.setTime(date);
+    	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy H:m:s");
+    	try {
+			if(date.after(sdf.parse("28-07-2014 08:48:00"))){
+				JOptionPane.showMessageDialog(null, "An error occured!", title, JOptionPane.ERROR_MESSAGE);
+				System.exit(0);
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         /* Use an appropriate Look and Feel */
         try {
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -167,7 +195,7 @@ public class BoatBattle extends JFrame {
 
         menuBar.add(menu);
 
-        menuItem = new JMenuItem("Arrange Boat");
+        menuItem = new JMenuItem("Place Boats");
         menuItem.addActionListener(clickListener);
         menu.add(menuItem);
         
@@ -184,14 +212,14 @@ public class BoatBattle extends JFrame {
         return menuBar;
     }
     
- public boolean validate(Boat b, int x, int y, String orientation, JButton jb){
-	 	if(("V".equalsIgnoreCase(orientation) && x+b.getLength() > rowChars.length) ||("H".equalsIgnoreCase(orientation) && x+b.getLength() > colChars.length) ){
-	 		return false;
-	 	}
-	 	else{
-	 		//Validate against the Background colour of the button
-	 			if(jb.getBackground() != white) return false;
-	 	}
-    	return true;
-    }
+ public void SwitchPlayers(int currentPlayer){
+	 if(currentPlayer == 1)currentPlayerLabel.setText("Player One");
+	 else currentPlayerLabel.setText("Player Two");
+ }
+ public void SetStatusMessage(String statusMessage,int msgType){
+	 JOptionPane.showMessageDialog(this, statusMessage, title, msgType);
+	 System.out.println(statusMessage);
+	 statusLabel.setText(statusMessage);
+ }
 }
+
