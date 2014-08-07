@@ -36,8 +36,7 @@ public class BoatBattle extends JFrame {
 	final static int gridSize = 10;
 	
 	public static int currentPlayer = 1 ;
-	public static String title = "Battle Boat Game";
-    JButton switchButton = new JButton("Pass");
+	public static String title = "Battling Boats Game";
     GridLayout playerTwoLayout = new GridLayout(gridSize,gridSize);
     GridLayout playerOneLayout = new GridLayout(gridSize,gridSize);
     GridLayout detailsLayout = new GridLayout(1,2);
@@ -50,7 +49,8 @@ public class BoatBattle extends JFrame {
     public static JButton[][] secondaryPlayerOneButtons  = new JButton[10][10];
     public static JButton[][] secondaryPlayerTwoButtons  = new JButton[10][10];
     public static JLabel currentPlayerLabel = new JLabel("Player One");
-    public JLabel statusLabel = new JLabel("Not Started");
+    public JLabel statusLabel1 = new JLabel("Not Started");
+    public JLabel statusLabel2 = new JLabel("Not Started");
     
     public JLabel secondaryGridLabel = new JLabel("Secondary Grid");
     public JLabel primaryGridLabel = new JLabel("Primary Grid");
@@ -143,13 +143,11 @@ public class BoatBattle extends JFrame {
         footer.add(new JLabel("Current Player:"));
         footer.add(currentPlayerLabel);
         footer.add(new JLabel("Status Message:"));
-        footer.add(statusLabel);
-      //Process the Apply gaps button press
-        switchButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-              //Code to switch players
-            }
-        });
+        if(currentPlayer == 1)
+        	footer.add(statusLabel1);
+        else
+        	footer.add(statusLabel2);
+        
         pane.add(header, BorderLayout.NORTH);
         pane.add(primaryGrid, BorderLayout.WEST);
         pane.add(secondaryGrid, BorderLayout.EAST);
@@ -182,19 +180,6 @@ public class BoatBattle extends JFrame {
     }
      
     public static void main(String[] args) {
-    	Date date = new Date();
-    	Calendar cal = Calendar.getInstance();
-    	cal.setTime(date);
-    	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy H:m:s");
-    	try {
-			if(date.after(sdf.parse("31-07-2014 12:48:00"))){
-				JOptionPane.showMessageDialog(null, "An error occured!", title, JOptionPane.ERROR_MESSAGE);
-				System.exit(0);
-			}
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
         /* Use an appropriate Look and Feel */
         try {
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -229,7 +214,6 @@ public class BoatBattle extends JFrame {
         frame2.setLocationRelativeTo(null);
         //Display the window.
         frame2.pack();
-    //    currentPlayerLabel.setText(playerOneLabel.getText());
     }
     public static JMenuBar createMenu() 
     {
@@ -264,40 +248,51 @@ public class BoatBattle extends JFrame {
  public void SwitchPlayers(){
 	 if(currentPlayer == 1){
  		currentPlayer = 2;
- 		currentPlayerLabel.setText("Player Two");
+ 	//	currentPlayerLabel.setText("Player Two");
  		if(frame2 == null)createPlayerTwoWindow();
  		frame2.setVisible(true);
  		frame.setVisible(false);
  		}
  	else{
  		currentPlayer = 1;
- 		currentPlayerLabel.setText("Player One");
+ 	//	currentPlayerLabel.setText("Player One");
  		frame.setVisible(true);
  		if(frame2 == null)createPlayerTwoWindow();
  		frame2.setVisible(false);
  	}
-	repaint();
-	currentPlayerLabel.paintImmediately(currentPlayerLabel.getVisibleRect());
+	 footer.repaint();
+	footer.paintImmediately(footer.getVisibleRect());
 	System.out.println("Current Player: "+currentPlayer);
  }
  public void SetStatusMessage(final String statusMessage,final int msgType){
-	 SwingUtilities.invokeLater(new Runnable() { public void run() {
-		boolean show = true;
-		 while(show){
-			 SwingUtilities.invokeLater(new Runnable() {
-				 @Override
-	                public void run()
-	                {
-					 statusLabel.setText(statusMessage);
-					 JOptionPane.showMessageDialog(rootPane, statusMessage, title, msgType);
-	                }
-	            });
-			 show = false;
-	               }
-	          }
-
-	      });
+	 if(currentPlayer ==1){
+		 getStatusLabel1().setText(statusMessage);
+		 System.out.println(getStatusLabel1().getText());
+	 	}
+	 else{
+		 getStatusLabel2().setText(statusMessage);
+		 System.out.println(getStatusLabel2().getText());
+	 	}
+	 		footer.revalidate();
+			JOptionPane.showMessageDialog(rootPane, statusMessage, title, msgType);
 	   }
+
+public JLabel getStatusLabel1() {
+	return statusLabel1;
+}
+
+public void setStatusLabel1(JLabel statusLabel1) {
+	this.statusLabel1 = statusLabel1;
+}
+
+public JLabel getStatusLabel2() {
+	return statusLabel2;
+}
+
+public void setStatusLabel2(JLabel statusLabel2) {
+	this.statusLabel2 = statusLabel2;
+}
+
 
 }
 

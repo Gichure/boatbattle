@@ -38,6 +38,7 @@ public class ClickListener extends BoatBattle implements ActionListener {
 	public ArrayList<JButton> boat3Buttons = new ArrayList<>();
 	public ArrayList<JButton> boat4Buttons = new ArrayList<>();
 	
+	
 	public ArrayList<JButton> boat1Buttons2 = new ArrayList<>();
 	public ArrayList<JButton> boat2Buttons2 = new ArrayList<>();
 	public ArrayList<JButton> boat3Buttons2 = new ArrayList<>();
@@ -47,6 +48,9 @@ public class ClickListener extends BoatBattle implements ActionListener {
 	private int hit2Buttons = 0;
 	private int hit3Buttons = 0;
 	private int hit4Buttons = 0;
+	
+	private int hitBoats = 0;
+	private int hitBoats2 = 0;
 	
 	private int hit1Buttons2 = 0;
 	private int hit2Buttons2 = 0;
@@ -149,7 +153,7 @@ public class ClickListener extends BoatBattle implements ActionListener {
         int dotIndex = classString.lastIndexOf(".");
         return classString.substring(dotIndex+1);
     }
-    public void ResetGame()
+    private void ResetGame()
     {
     	neighborButtons.clear();
     	arrangedBoats.clear();
@@ -188,13 +192,14 @@ public class ClickListener extends BoatBattle implements ActionListener {
     	 ArrayList<Boat> sourceBoats = arrangedBoats;
 			if(currentPlayer == 2) sourceBoats = arrangedBoats2;
 			if(sourceBoats.size() < 4){
-				SetStatusMessage("Boats for Player "+currentPlayer+" not fully configured!", JOptionPane.ERROR_MESSAGE);
+			//	getStatusLabel().setText("Boats for Player "+currentPlayer+" not fully configured!");
+			SetStatusMessage("Boats for Player "+currentPlayer+" not fully configured!", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 			return true;
     }
     
-    public void QuitGame()
+    private void QuitGame()
     {
     	//SetStatusMessage("Quiting...");
         System.exit(0);
@@ -207,10 +212,13 @@ public class ClickListener extends BoatBattle implements ActionListener {
     public void clickEvent(int row, int col)
     {
     	if(currentPlayer == 2 && arrangedBoats.size() < 4){
+    		//I need to arrange the boats for player one
         		SetStatusMessage("Player One has not placed all boats on board.", JOptionPane.ERROR_MESSAGE);
         		return;
     	}
     	if(currentPlayer == 1 && arrangedBoats2.size() < 4){
+    		//I need to arrange the boats for player one
+    		
     		SetStatusMessage("Player Two has not placed all boats on board.", JOptionPane.ERROR_MESSAGE);
     		return;
     	}
@@ -440,7 +448,7 @@ public class ClickListener extends BoatBattle implements ActionListener {
 			 		if(currentPlayer==2)sourceneighBtns= neighborButtons2;
 			 		for(JButton jb : sourceneighBtns){
 			 			if (jb.getActionCommand().equalsIgnoreCase(bt.getActionCommand())){
-			 				SetStatusMessage(jb.getActionCommand() + " is neighbour to occupied position.",JOptionPane.ERROR_MESSAGE);
+			 				SetStatusMessage("Invalid placement.",JOptionPane.ERROR_MESSAGE);
 			 				return false;
 			 			}
 			 		}
@@ -670,6 +678,7 @@ public class ClickListener extends BoatBattle implements ActionListener {
 					hit4Buttons++;
 	 			}
 			}
+			System.out.println("Coloured so far: "+hit1Buttons+","+hit2Buttons+","+hit3Buttons+","+hit4Buttons);
 		 }
 		 else{
 			 System.out.println("Colouring for Player 2: "+b.getActionCommand());
@@ -693,103 +702,110 @@ public class ClickListener extends BoatBattle implements ActionListener {
 						hit4Buttons2++;
 		 			}
 				}
+				System.out.println("Coloured so far 2: "+hit1Buttons2+","+hit2Buttons2+","+hit3Buttons2+","+hit4Buttons2);
 			 }
 		 
  }
 	 private void colourAllButtons(ArrayList<JButton>  buttons){
 		 int counter = 0;
-		 ArrayList<JButton>  bts = null;
 		 if(currentPlayer == 2){
 			 //look up in the player two's grid
 			 if(buttons.size() == Boat.AIRCRAFT.getSize()){
-				 counter =hit1Buttons2;
-				 if(counter == buttons.size()){
+				 counter = hit1Buttons2;
+				 if(hit1Buttons2 == buttons.size()){
 					 for(JButton j : buttons){
 		   				j.setBackground(criticalHitColor);
 		   			 }
+					 SetStatusMessage("Player One\'s "+Boat.AIRCRAFT.getName()+" sunk.", JOptionPane.INFORMATION_MESSAGE);
+					 hitBoats2++;
 				 }
+				 
 			 }
 			 if(buttons.size() == Boat.BATTLESHIP.getSize()){
-			//	 bts =  boat2Buttons2;
-				 counter =hit2Buttons2;
-				 if(counter == buttons.size()){
+				 counter = hit2Buttons2;
+				 if(hit2Buttons2 == buttons.size()){
 					 for(JButton j : buttons){
 		   				j.setBackground(criticalHitColor);
 		   			 }
-				 }
+		   				SetStatusMessage("Player One\'s "+Boat.BATTLESHIP.getName()+" sunk.", JOptionPane.INFORMATION_MESSAGE);
+		   				hitBoats2++;
+		   			}
 			 }
 			 if(buttons.size() == Boat.DESTROYER.getSize()){
-				// bts = boat3Buttons2;
 				 counter = hit3Buttons2;
-				 if(counter == buttons.size()){
+				 if(hit3Buttons2 == buttons.size()){
 					 for(JButton j : buttons){
 		   				j.setBackground(criticalHitColor);
 		   			 }
-				 }
+					 SetStatusMessage("Player One\'s "+Boat.DESTROYER.getName()+" sunk.", JOptionPane.INFORMATION_MESSAGE);
+					 hitBoats2++;
+					 }
 			 }
 			 if(buttons.size() == Boat.PATROL.getSize()){
-				// bts = boat4Buttons2;
 				 counter = hit4Buttons2;
-				 if(counter == buttons.size()){
+				 if(hit4Buttons2 == buttons.size()){
 					 for(JButton j : buttons){
 		   				j.setBackground(criticalHitColor);
 		   			 }
-				 }
+					 SetStatusMessage("Player One\'s "+Boat.PATROL.getName()+" sunk.", JOptionPane.INFORMATION_MESSAGE);
+					 hitBoats2++;
+					 }
 			 }
 		 }
 		 else{
-			 //look up in the player one's grid
+			 //look up in the player Two's grid
 			 if(buttons.size() == Boat.AIRCRAFT.getSize()){
-				// bts = boat1Buttons;
 				 counter = hit1Buttons;
-				 if(counter == buttons.size()){
+				 if(hit1Buttons == buttons.size()){
 					 for(JButton j : buttons){
 		   				j.setBackground(criticalHitColor);
 		   			 }
+					 SetStatusMessage("Player Two\'s "+Boat.AIRCRAFT.getName()+" sunk.", JOptionPane.INFORMATION_MESSAGE);
+					 hitBoats++;
 				 }
-			 }
+				 }
 			 if(buttons.size() == Boat.BATTLESHIP.getSize()){
-				// bts = boat2Buttons;
 				 counter = hit2Buttons;
-				 if(counter == buttons.size()){
+				 if(hit2Buttons == buttons.size()){
 					 for(JButton j : buttons){
 		   				j.setBackground(criticalHitColor);
 		   			 }
-				 }
+						SetStatusMessage("Player Two\'s "+Boat.BATTLESHIP.getName()+" sunk.", JOptionPane.INFORMATION_MESSAGE);
+						hitBoats++;
+					}
 			 }
 			 if(buttons.size() == Boat.DESTROYER.getSize()){
-			//	 bts = boat3Buttons;
 				 counter = hit3Buttons;
-				 if(counter == buttons.size()){
+				 if(hit3Buttons == buttons.size()){
 					 for(JButton j : buttons){
 		   				j.setBackground(criticalHitColor);
 		   			 }
-				 }
+					 SetStatusMessage("Player Two\'s "+Boat.DESTROYER.getName()+" sunk.", JOptionPane.INFORMATION_MESSAGE);
+					 hitBoats++;
+					 }
 			 }
 			 if(buttons.size() == Boat.PATROL.getSize()){
-				// bts = boat4Buttons;
-				//counter = hit4Buttons;
+				counter = hit4Buttons;
 				 if(hit4Buttons == buttons.size()){
 					 for(JButton j : buttons){
 		   				j.setBackground(criticalHitColor);
 		   			 }
-				 }
+					 SetStatusMessage("Player Two\'s "+Boat.PATROL.getName()+" sunk.", JOptionPane.INFORMATION_MESSAGE);
+					 hitBoats++;
+					 }
 			 }
 		 }
-		 /*System.out.println("Found buttons: "+counter);
-		 for(JButton j : bts){
-			 System.out.println(j.getBackground());
+		 System.out.println("Hit buttons: "+counter);
+		 System.out.println("Sunk Boats 1: "+hitBoats);
+		 System.out.println("Sunk Boats 2: "+hitBoats2);
+		 if(hitBoats == 4){
+			 SetStatusMessage("Game Complete!", JOptionPane.INFORMATION_MESSAGE);
+			 SetStatusMessage("Player Two wins the game.", JOptionPane.INFORMATION_MESSAGE);
+		 }
+		 else if(hitBoats2 == 4){
+			 SetStatusMessage("Game Complete!", JOptionPane.INFORMATION_MESSAGE);
+			 SetStatusMessage("Player One wins the game.", JOptionPane.INFORMATION_MESSAGE);
 			 
-			 if(j.getBackground().equals(hitColor)){
-				 counter = counter + 1;
-			 }
-		 }*/
-		/*	 System.out.println("Hit grids: "+counter);
-			 if(counter == buttons.size()){
-				 for(JButton j : buttons){
-	   				j.setBackground(criticalHitColor);
-	   			 }
-			 }
-		 }*/
+		 }
 	 }
 }
